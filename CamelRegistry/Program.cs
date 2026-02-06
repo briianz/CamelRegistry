@@ -6,13 +6,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 
-//Swagger regisztrálása
+//Swagger regisztrÃ¡lÃ¡sa
 builder.Services.AddSwaggerGen();
 
-//Adatbázis (SQLite) regisztrálása
+//AdatbÃ¡zis (SQLite) regisztrÃ¡lÃ¡sa
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=camels.db"));
 
+//CORS beÃ¡llÃ­tÃ¡sa, hogy a frontend alkalmazÃ¡sunk is hozzÃ¡fÃ©rhessen az API-hoz
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(policy => {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -21,20 +29,20 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-//Swagger használata, ha a környezet fejlesztõi környezet
+//Swagger hasznÃ¡lata, ha a kÃ¶rnyezet fejlesztÅ‘i kÃ¶rnyezet
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//Új teve létrehozása (POST)
+//Ãšj teve lÃ©trehozÃ¡sa (POST)
 app.MapPost("/api/camels", async (Camel camel, AppDbContext db) =>
 {
 
-    if (camel.HumpCount < 1 || camel.HumpCount > 2) // Validáció a púpok számára
+    if (camel.HumpCount < 1 || camel.HumpCount > 2) // ValidÃ¡ciÃ³ a pÃºpok szÃ¡mÃ¡ra
     {
-        return Results.BadRequest("A tevének csak 1 vagy 2 púpja lehet.");
+        return Results.BadRequest("A tevÃ©nek csak 1 vagy 2 pÃºpja lehet.");
     }
 
     db.Camels.Add(camel);
@@ -45,7 +53,7 @@ app.MapPost("/api/camels", async (Camel camel, AppDbContext db) =>
 
 });
 
-//Tevék listázása (GET)
+//TevÃ©k listÃ¡zÃ¡sa (GET)
 app.MapGet("/api/camels", async (AppDbContext db) =>
 {
     var camels = await db.Camels.ToListAsync();
@@ -53,7 +61,7 @@ app.MapGet("/api/camels", async (AppDbContext db) =>
     return Results.Ok(camels);
 });
 
-//Egy adott teve lekérdezése (GET/{id})
+//Egy adott teve lekÃ©rdezÃ©se (GET/{id})
 app.MapGet("/api/camels/{id}", async (int id, AppDbContext db) =>
 {
     var camel = await db.Camels.FindAsync(id);
@@ -67,16 +75,16 @@ app.MapGet("/api/camels/{id}", async (int id, AppDbContext db) =>
 
 });
 
-/*Egy adott teve adatainak módosítása (PUT/{id})
-    Az összes adatot meg kell adni, és az adott id-n már meglévõ teve adatait teljesen felülírja*/
+/*Egy adott teve adatainak mÃ³dosÃ­tÃ¡sa (PUT/{id})
+    Az Ã¶sszes adatot meg kell adni, Ã©s az adott id-n mÃ¡r meglÃ©vÅ‘ teve adatait teljesen felÃ¼lÃ­rja*/
 app.MapPut("/api/camels/{id}", async (int id, Camel updatedCamel, AppDbContext db) =>
 {
-    if (updatedCamel.HumpCount < 1 || updatedCamel.HumpCount > 2) // Validáció a púpok számára itt is 
+    if (updatedCamel.HumpCount < 1 || updatedCamel.HumpCount > 2) // ValidÃ¡ciÃ³ a pÃºpok szÃ¡mÃ¡ra itt is 
     {
-        return Results.BadRequest("A tevének csak 1 vagy 2 púpja lehet.");
+        return Results.BadRequest("A tevÃ©nek csak 1 vagy 2 pÃºpja lehet.");
     }
     var camel = await db.Camels.FindAsync(id);
-    if (camel == null) //Ha az adott id-n nincs teve, akkor hibát dobunk vissza
+    if (camel == null) //Ha az adott id-n nincs teve, akkor hibÃ¡t dobunk vissza
     {
         return Results.NotFound();
     }
@@ -88,7 +96,7 @@ app.MapPut("/api/camels/{id}", async (int id, Camel updatedCamel, AppDbContext d
     return Results.Ok(camel);
 });
 
-//Teve törlése (DELETE/{id})
+//Teve tÃ¶rlÃ©se (DELETE/{id})
 app.MapDelete("/api/camels/{id}", async (int id, AppDbContext db) =>
 {
     var camel = await db.Camels.FindAsync(id);
@@ -101,9 +109,10 @@ app.MapDelete("/api/camels/{id}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 });
 
+app.UseCors();
 app.Run();
 
-//Megnyitjuk a program osztályt, hogy a tesztekben is elérhetõ legyen
+//Megnyitjuk a program osztÃ¡lyt, hogy a tesztekben is elÃ©rhetÅ‘ legyen
 public partial class Program { }
 
 
