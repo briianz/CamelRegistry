@@ -1,7 +1,7 @@
 # Camel Registry - Teve Nyilvántartó
 Ez a projekt egy két részből álló próba feladat.
 
-Technológiai rész:
+Technológiai:
 
 Backend: .NET 8 Minimal API 
 
