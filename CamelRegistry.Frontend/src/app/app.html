@@ -1,0 +1,42 @@
+<div class="container mt-5">
+  <h1 class="text-center mb-5">Camel Registry</h1>
+
+  <div class="card p-4 mb-5 shadow-lg">
+    <h3>{{ isEditing ? 'Teve Szerkesztése' : 'Új Teve Felvétele' }}</h3>
+    <div class="row g-2">
+      <div class="col-md-4"><input class="form-control" [(ngModel)]="newCamel.name" placeholder="Név"></div>
+      <div class="col-md-3"><input class="form-control" [(ngModel)]="newCamel.color" placeholder="Szín"></div>
+      <div class="col-md-2">
+        <select class="form-select" [(ngModel)]="newCamel.humpCount">
+          <option [ngValue]="1">1 púp</option>
+          <option [ngValue]="2">2 púp</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-primary w-100" (click)='saveCamel()'>{{ isEditing ? 'Mentés' : 'Létrehozás' }}</button>
+      </div>
+    </div>
+  </div>
+
+  <table class="table table-dark table-striped">
+    <thead>
+      <tr>
+        <th>Név</th>
+        <th>Szín</th>
+        <th>Púpok</th>
+        <th>Akciók</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let camel of camels">
+        <td>{{ camel.name }}</td>
+        <td>{{ camel.color }}</td>
+        <td>{{ camel.humpCount }}</td>
+        <td>
+          <button class="btn btn-warning btn-sm me-2" (click)="editCamel(camel)">Módosítás</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteCamel(camel.id!)">Törlés</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
