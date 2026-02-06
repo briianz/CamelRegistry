@@ -1,4 +1,4 @@
-#Camel Registry - Teve Nyilvántartó
+# Camel Registry - Teve Nyilvántartó
 Ez a projekt egy két részből álló próba feladat.
 
 Technológiai rész:
