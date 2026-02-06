@@ -103,5 +103,7 @@ app.MapDelete("/api/camels/{id}", async (int id, AppDbContext db) =>
 
 app.Run();
 
+//Megnyitjuk a program osztályt, hogy a tesztekben is elérhetõ legyen
+public partial class Program { }
 
 
