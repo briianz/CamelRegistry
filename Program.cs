@@ -5,8 +5,11 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+
+//Swagger regisztrálása
 builder.Services.AddSwaggerGen();
 
+//Adatbázis (SQLite) regisztrálása
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=camels.db"));
 
@@ -18,7 +21,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-
+//Swagger használata, ha a környezet fejlesztõi környezet
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -29,7 +32,7 @@ if (app.Environment.IsDevelopment())
 app.MapPost("/api/camels", async (Camel camel, AppDbContext db) =>
 {
 
-    if (camel.HumpCount < 1 || camel.HumpCount > 2)
+    if (camel.HumpCount < 1 || camel.HumpCount > 2) // Validáció a púpok számára
     {
         return Results.BadRequest("A tevének csak 1 vagy 2 púpja lehet.");
     }
@@ -64,15 +67,16 @@ app.MapGet("/api/camels/{id}", async (int id, AppDbContext db) =>
 
 });
 
-//Egy adott teve adatainak módosítása (PUT/{id})
+/*Egy adott teve adatainak módosítása (PUT/{id})
+    Az összes adatot meg kell adni, és az adott id-n már meglévõ teve adatait teljesen felülírja*/
 app.MapPut("/api/camels/{id}", async (int id, Camel updatedCamel, AppDbContext db) =>
 {
-    if (updatedCamel.HumpCount < 1 || updatedCamel.HumpCount > 2)
+    if (updatedCamel.HumpCount < 1 || updatedCamel.HumpCount > 2) // Validáció a púpok számára itt is 
     {
         return Results.BadRequest("A tevének csak 1 vagy 2 púpja lehet.");
     }
     var camel = await db.Camels.FindAsync(id);
-    if (camel == null)
+    if (camel == null) //Ha az adott id-n nincs teve, akkor hibát dobunk vissza
     {
         return Results.NotFound();
     }
