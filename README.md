@@ -3,19 +3,19 @@ Ez a projekt egy két részből álló próba feladat.
 
 # Technológia:
 
-Backend: .NET 8 Minimal API 
+Backend: .NET 9 Minimal API 
 
 
 Adatbázis: SQLite + Entity Framework Core 
 
 
-Dokumentáció: OpenAPI / Swagger UI 
+Dokumentáció: Swagger UI 
 
 
 Tesztelés: xUnit 
 
 
-Frontend: Angular 17+, Bootstrap 
+Frontend: Angular 21.1.3, Bootstrap 
 
 # Funkciók (Backend):
 
